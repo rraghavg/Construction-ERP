@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+:root {
+  /* ═══════════════════════════════════════════════
+     MATERIAL DESIGN 3 — LIGHT THEME TOKENS
+     Based on design.html reference palette
+     ═══════════════════════════════════════════════ */
+
+  /* Primary Font */
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Inter', monospace;
+
+  /* ── M3 Primary Tones ── */
+  --m3-primary: #005bbf;
+  --m3-on-primary: #ffffff;
+  --m3-primary-container: #1a73e8;
+  --m3-on-primary-container: #ffffff;
+
+  /* ── M3 Secondary Tones ── */
+  --m3-secondary: #005ac1;
+  --m3-on-secondary: #ffffff;
+  --m3-secondary-container: #4d8efe;
+  --m3-on-secondary-container: #ffffff;
+
+  /* ── M3 Tertiary Tones ── */
+  --m3-tertiary: #006d2c;
+  --m3-on-tertiary: #ffffff;
+  --m3-tertiary-container: #008939;
+  --m3-on-tertiary-container: #ffffff;
+
+  /* ── M3 Error Tones ── */
+  --m3-error: #ba1a1a;
+  --m3-on-error: #ffffff;
+  --m3-error-container: #ffdad6;
+  --m3-on-error-container: #93000a;
+
+  /* ── M3 Surface System ── */
+  --m3-surface: #f8f9fa;
+  --m3-surface-dim: #d9dadb;
+  --m3-surface-bright: #f8f9fa;
+  --m3-surface-container-lowest: #ffffff;
+  --m3-surface-container-low: #f3f4f5;
+  --m3-surface-container: #edeeef;
+  --m3-surface-container-high: #e7e8e9;
+  --m3-surface-container-highest: #e1e3e4;
+  --m3-on-surface: #191c1d;
+  --m3-on-surface-variant: #414754;
+  --m3-background: #f8f9fa;
+  --m3-on-background: #191c1d;
+
+  /* ── M3 Outline ── */
+  --m3-outline: #727785;
+  --m3-outline-variant: #c1c6d6;
+
+  /* ── M3 Inverse ── */
+  --m3-inverse-surface: #2e3132;
+  --m3-inverse-on-surface: #f0f1f2;
+  --m3-inverse-primary: #adc7ff;
+
+  /* ── M3 Fixed Colors ── */
+  --m3-primary-fixed: #d8e2ff;
+  --m3-primary-fixed-dim: #adc7ff;
+  --m3-secondary-fixed: #d8e2ff;
+  --m3-secondary-fixed-dim: #adc6ff;
+  --m3-tertiary-fixed: #89fa9b;
+  --m3-tertiary-fixed-dim: #6ddd81;
+
+  /* ── M3 Surface Tint ── */
+  --m3-surface-tint: #005bc0;
+
+  /* ═══════════════════════════════════════════════
+     MAPPED APPLICATION TOKENS
+     (keeps backward compat with existing components)
+     ═══════════════════════════════════════════════ */
+
+  /* App Backgrounds */
+  --bg-app: var(--m3-background);
+  --bg-header: var(--m3-surface-container-lowest);
+  --bg-card: var(--m3-surface-container-lowest);
+  --bg-card-hover: var(--m3-surface-container-low);
+  --bg-input: var(--m3-surface-container-low);
+
+  /* Sidebar — Light M3 Navigation Drawer */
+  --bg-sidebar: var(--m3-surface);
+  --sidebar-bg: var(--m3-surface);
+  --sidebar-border: var(--m3-outline-variant);
+  --sidebar-text: var(--m3-on-surface);
+  --sidebar-text-muted: var(--m3-on-surface-variant);
+  --sidebar-hover-bg: var(--m3-surface-container-high);
+  --sidebar-active-bg: var(--m3-secondary-container);
+  --sidebar-active-text: var(--m3-on-secondary-container);
+  --sidebar-active-border: var(--m3-primary);
+
+  /* Text */
+  --text-main: var(--m3-on-surface);
+  --text-muted: var(--m3-on-surface-variant);
+  --text-inverse: var(--m3-on-primary);
+
+  /* Borders */
+  --border-color: #dadce0;
+  --border-dark: var(--m3-outline);
+  --border-hover: var(--m3-primary);
+
+  /* Primary Accent */
+  --primary-color: var(--m3-primary);
+  --primary-gradient: linear-gradient(135deg, #1a73e8 0%, #005bbf 100%);
+  --precision-blue: var(--m3-primary-container);
+  --structural-slate: var(--m3-primary-container);
+  --accent-cyan: #1a73e8;
+
+  /* Status Colors */
+  --color-success: var(--m3-tertiary);
+  --color-success-bg: rgba(0, 109, 44, 0.08);
+  --color-warning: #e8710a;
+  --color-warning-bg: rgba(232, 113, 10, 0.08);
+  --color-danger: var(--m3-error);
+  --color-danger-bg: rgba(186, 26, 26, 0.08);
+  --color-info: var(--m3-primary);
+  --color-info-bg: rgba(0, 91, 191, 0.08);
+
+  /* M3 Elevation (Google shadow specs) */
+  --shadow-sm: 0 1px 2px 0 rgba(60, 64, 67, 0.15);
+  --shadow-md: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  --shadow-lg: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+  --shadow-xl: 0 2px 3px 0 rgba(60, 64, 67, 0.3), 0 6px 10px 4px rgba(60, 64, 67, 0.15);
+  --shadow-blue: 0 1px 3px 0 rgba(26, 115, 232, 0.3), 0 4px 8px 3px rgba(26, 115, 232, 0.15);
+  --shadow-modal: 0 2px 3px 0 rgba(60, 64, 67, 0.3), 0 6px 10px 4px rgba(60, 64, 67, 0.15);
+
+  /* Glass effects — M3 style */
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: 1px solid var(--m3-outline-variant);
+  --glass-blur: blur(12px);
+
+  /* Z-Index Scale */
+  --z-content: 1;
+  --z-header: 30;
+  --z-sidebar: 40;
+  --z-dropdown: 200;
+  --z-overlay: 9000;
+  --z-modal: 9999;
+  --z-toast: 10000;
+
+  /* Neutral Surfaces */
+  --bg-surface-raised: var(--m3-surface-container-low);
+  --bg-surface-overlay: rgba(0, 0, 0, 0.02);
+  --bg-kanban-col: var(--m3-surface-container-low);
+  --bg-kanban-card: var(--m3-surface-container-lowest);
+  --bg-progress-track: var(--m3-surface-container);
+  --modal-overlay-bg: rgba(0, 0, 0, 0.32);
+  --modal-border-color: var(--m3-outline-variant);
+
+  /* Layout Dimensions */
+  --sidebar-width: 288px;
+  --sidebar-collapsed-width: 72px;
+  --header-height: 64px;
+
+  /* M3 Spacing */
+  --spacing-unit: 8px;
+  --margin-mobile: 16px;
+  --margin-desktop: 32px;
+  --container-padding: 24px;
+  --gutter: 16px;
+
+  /* M3 Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+}
+
+/* ═══════════════════════════════════════════════
+   DARK THEME — M3 Dark Scheme
+   ═══════════════════════════════════════════════ */
+[data-theme='dark'] {
+  --m3-primary: #adc7ff;
+  --m3-on-primary: #002e6a;
+  --m3-primary-container: #004493;
+  --m3-on-primary-container: #d8e2ff;
+
+  --m3-secondary: #adc6ff;
+  --m3-on-secondary: #002e69;
+  --m3-secondary-container: #004494;
+  --m3-on-secondary-container: #d8e2ff;
+
+  --m3-tertiary: #6ddd81;
+  --m3-on-tertiary: #003913;
+  --m3-tertiary-container: #005320;
+  --m3-on-tertiary-container: #89fa9b;
+
+  --m3-error: #ffb4ab;
+  --m3-on-error: #690005;
+  --m3-error-container: #93000a;
+  --m3-on-error-container: #ffdad6;
+
+  --m3-surface: #111416;
+  --m3-surface-dim: #111416;
+  --m3-surface-bright: #373a3c;
+  --m3-surface-container-lowest: #0c0e10;
+  --m3-surface-container-low: #191c1d;
+  --m3-surface-container: #1d2021;
+  --m3-surface-container-high: #282a2c;
+  --m3-surface-container-highest: #333537;
+  --m3-on-surface: #e1e3e4;
+  --m3-on-surface-variant: #c1c6d6;
+  --m3-background: #111416;
+  --m3-on-background: #e1e3e4;
+
+  --m3-outline: #8b9099;
+  --m3-outline-variant: #414754;
+
+  --m3-inverse-surface: #e1e3e4;
+  --m3-inverse-on-surface: #2e3132;
+  --m3-inverse-primary: #005bc0;
+
+  /* Remapped application tokens for dark */
+  --bg-app: var(--m3-background);
+  --bg-sidebar: var(--m3-surface);
+  --sidebar-bg: var(--m3-surface);
+  --sidebar-border: var(--m3-outline-variant);
+  --sidebar-text: var(--m3-on-surface);
+  --sidebar-text-muted: var(--m3-on-surface-variant);
+  --sidebar-hover-bg: var(--m3-surface-container-high);
+  --sidebar-active-bg: var(--m3-secondary-container);
+  --sidebar-active-text: var(--m3-on-secondary-container);
+
+  --bg-header: var(--m3-surface-container-lowest);
+  --bg-card: var(--m3-surface-container);
+  --bg-card-hover: var(--m3-surface-container-high);
+  --bg-input: var(--m3-surface-container-low);
+
+  --border-color: var(--m3-outline-variant);
+  --border-dark: var(--m3-outline);
+
+  --text-main: var(--m3-on-surface);
+  --text-muted: var(--m3-on-surface-variant);
+  --text-inverse: var(--m3-on-primary);
+
+  --precision-blue: var(--m3-primary);
+  --structural-slate: var(--m3-primary-container);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 1px 2px 0 rgba(0, 0, 0, 0.5), 0 1px 3px 1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 4px 8px 3px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 2px 3px 0 rgba(0, 0, 0, 0.5), 0 6px 10px 4px rgba(0, 0, 0, 0.3);
+  --shadow-modal: 0 2px 3px 0 rgba(0, 0, 0, 0.5), 0 6px 10px 4px rgba(0, 0, 0, 0.3);
+
+  --glass-bg: rgba(29, 32, 33, 0.92);
+  --glass-border: 1px solid var(--m3-outline-variant);
+
+  --bg-surface-raised: var(--m3-surface-container-high);
+  --bg-surface-overlay: rgba(255, 255, 255, 0.04);
+  --bg-kanban-col: var(--m3-surface-container);
+  --bg-kanban-card: var(--m3-surface-container-high);
+  --bg-progress-track: var(--m3-surface-container-highest);
+  --modal-overlay-bg: rgba(0, 0, 0, 0.6);
+  --modal-border-color: var(--m3-outline-variant);
+
+  --color-success-bg: rgba(109, 221, 129, 0.12);
+  --color-warning-bg: rgba(232, 113, 10, 0.12);
+  --color-danger-bg: rgba(255, 180, 171, 0.12);
+  --color-info-bg: rgba(173, 199, 255, 0.12);
+}

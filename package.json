@@ -1,14 +1,15 @@
 {
-  "name": "constrution-erp",
+  "name": "apex-construction-erp",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite frontend",
+    "build": "vite build frontend",
     "lint": "oxlint",
-    "preview": "vite preview",
-    "server": "tsx server/src/app.ts"
+    "preview": "vite preview frontend",
+    "server": "tsx backend/src/server.ts",
+    "typecheck:backend": "tsc --noEmit --project backend/tsconfig.json"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
