@@ -5,6 +5,7 @@ export interface IProjectStructureConfig {
   towerEnabled: boolean;
   towerRequiresBuilding: boolean;
   floorEnabled: boolean;
+  allowedFloorParents: ('PROJECT' | 'BUILDING' | 'TOWER')[];
 }
 
 export interface IProject extends Document {
@@ -56,7 +57,12 @@ const ProjectSchema: Schema = new Schema(
       buildingEnabled: { type: Boolean, default: true },
       towerEnabled: { type: Boolean, default: true },
       towerRequiresBuilding: { type: Boolean, default: false },
-      floorEnabled: { type: Boolean, default: true }
+      floorEnabled: { type: Boolean, default: true },
+      allowedFloorParents: {
+        type: [String],
+        enum: ['PROJECT', 'BUILDING', 'TOWER'],
+        default: ['PROJECT', 'BUILDING', 'TOWER']
+      }
     },
     description: String,
     createdBy: String,

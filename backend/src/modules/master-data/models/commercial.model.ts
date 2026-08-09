@@ -104,6 +104,6 @@ const BankSchema: Schema = new Schema(
 
 BankSchema.index({ tenantId: 1, bankId: 1 });
 
-export const VendorModel = mongoose.model<IVendor>('Vendor', VendorSchema);
+export const VendorModel = (mongoose.models.Vendor as mongoose.Model<IVendor>) || mongoose.model<IVendor>('Vendor', VendorSchema);
 export const DealerModel = mongoose.model<IDealer>('Dealer', DealerSchema);
 export const BankModel = mongoose.model<IBank>('Bank', BankSchema);

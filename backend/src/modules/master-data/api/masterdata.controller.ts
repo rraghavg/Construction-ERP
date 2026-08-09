@@ -186,8 +186,11 @@ export class MasterDataController {
   // Floors
   static async listFloors(req: AuthenticatedRequest, res: Response) {
     const { projectId } = req.params;
-    const { buildingId, towerId, status, search, page, limit } = req.query;
-    const result = await MasterDataService.listFloors(req.tenantId!, projectId, buildingId as string, towerId as string, {
+    const { parentType, buildingId, towerId, status, search, page, limit } = req.query;
+    const result = await MasterDataService.listFloors(req.tenantId!, projectId, {
+      parentType: parentType as string,
+      buildingId: buildingId as string,
+      towerId: towerId as string,
       status: status as string,
       search: search as string,
       page: page ? parseInt(page as string, 10) : 1,

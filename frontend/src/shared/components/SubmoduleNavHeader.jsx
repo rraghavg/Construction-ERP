@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useApp } from '../../core/providers/AppContext';
-import { MODULES_LIST } from '../../data/mockData';
+import { MODULES_LIST, SETTINGS_MODULE } from '../../data/mockData';
 
 export const SubmoduleNavHeader = memo(function SubmoduleNavHeader({
   moduleId,
@@ -10,7 +10,8 @@ export const SubmoduleNavHeader = memo(function SubmoduleNavHeader({
 }) {
   const { activeModule, activeSubmodule, navigateTo } = useApp();
 
-  const currentMod = MODULES_LIST.find((m) => m.id === (moduleId || activeModule));
+  const targetId = moduleId || activeModule;
+  const currentMod = MODULES_LIST.find((m) => m.id === targetId) || (targetId === 'settings' ? SETTINGS_MODULE : null);
   const submodules = currentMod?.submodules || [];
 
   const displayTitle = title || `${currentMod?.name || 'Module'} Command Center`;

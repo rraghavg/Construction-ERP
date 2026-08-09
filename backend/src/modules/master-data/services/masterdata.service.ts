@@ -760,14 +760,15 @@ export class MasterDataService {
   }
 
   // ---- Floor Operations ----
-  static async listFloors(tenantId: string, projectId: string, buildingId?: string, towerId?: string, query: { status?: string; search?: string; page?: number; limit?: number } = {}) {
+  static async listFloors(tenantId: string, projectId: string, query: { parentType?: string; buildingId?: string; towerId?: string; status?: string; search?: string; page?: number; limit?: number } = {}) {
     const page = query.page || 1;
     const limit = query.limit || 100;
     const skip = (page - 1) * limit;
 
     const filter: any = { tenantId, projectId };
-    if (buildingId) filter.buildingId = buildingId;
-    if (towerId) filter.towerId = towerId;
+    if (query.parentType) filter.parentType = query.parentType;
+    if (query.buildingId) filter.buildingId = query.buildingId;
+    if (query.towerId) filter.towerId = query.towerId;
     if (query.status) filter.status = query.status;
     if (query.search) {
       filter.$or = [
@@ -802,51 +803,76 @@ export class MasterDataService {
       throw new ApiError(403, 'FLOORS_DISABLED', `Floor creation is disabled in project '${projectId}' configuration`);
     }
 
-    // Validate parent ancestry
-    if (data.towerId) {
-      const tower = await TowerModel.findOne({ tenantId, projectId, towerId: data.towerId, status: 'active' });
-      if (!tower) {
-        throw new ApiError(404, 'TOWER_NOT_FOUND', `Active Parent Tower '${data.towerId}' not found in project`);
-      }
-      if (tower.buildingId && data.buildingId && tower.buildingId !== data.buildingId) {
-        throw new ApiError(400, 'ANCESTRY_MISMATCH', `Tower '${data.towerId}' belongs to building '${tower.buildingId}', not '${data.buildingId}'`);
-      }
-      if (tower.buildingId && !data.buildingId) {
-        data.buildingId = tower.buildingId;
-      }
+    const { parentType, code } = data;
+    const allowedParents = project.structureConfig.allowedFloorParents || ['PROJECT', 'BUILDING', 'TOWER'];
+    
+    if (!parentType || !['PROJECT', 'BUILDING', 'TOWER'].includes(parentType)) {
+      throw new ApiError(400, 'INVALID_INPUT', 'parentType must be PROJECT, BUILDING, or TOWER');
+    }
+    
+    if (!allowedParents.includes(parentType)) {
+      throw new ApiError(400, 'PARENT_TYPE_NOT_ALLOWED', `parentType '${parentType}' is not enabled in project structure configuration`);
     }
 
-    if (data.buildingId) {
+    let resolvedBuildingId = null;
+    let resolvedTowerId = null;
+
+    if (parentType === 'PROJECT') {
+      if (data.buildingId || data.towerId) {
+        throw new ApiError(400, 'INVALID_INPUT', 'buildingId and towerId must not be provided when parentType is PROJECT');
+      }
+    } else if (parentType === 'BUILDING') {
+      if (!data.buildingId) {
+        throw new ApiError(400, 'INVALID_INPUT', 'buildingId is required when parentType is BUILDING');
+      }
       const building = await BuildingModel.findOne({ tenantId, projectId, buildingId: data.buildingId, status: 'active' });
       if (!building) {
         throw new ApiError(404, 'BUILDING_NOT_FOUND', `Active Parent Building '${data.buildingId}' not found in project`);
       }
+      resolvedBuildingId = data.buildingId;
+    } else if (parentType === 'TOWER') {
+      if (!data.towerId) {
+        throw new ApiError(400, 'INVALID_INPUT', 'towerId is required when parentType is TOWER');
+      }
+      const tower = await TowerModel.findOne({ tenantId, projectId, towerId: data.towerId, status: 'active' });
+      if (!tower) {
+        throw new ApiError(404, 'TOWER_NOT_FOUND', `Active Parent Tower '${data.towerId}' not found in project`);
+      }
+      resolvedTowerId = data.towerId;
+      resolvedBuildingId = tower.buildingId || null; // Server-side derivation
     }
 
-    const floorNo = typeof data.floorNo === 'number' ? data.floorNo : parseInt(data.floorNo, 10);
-    if (isNaN(floorNo)) {
-      throw new ApiError(400, 'INVALID_INPUT', 'Floor number (floorNo) must be a valid integer');
+    const cleanCode = code ? code.trim().toUpperCase() : '';
+    if (!cleanCode || !/^[A-Z0-9-]+$/.test(cleanCode)) {
+      throw new ApiError(400, 'INVALID_INPUT', 'Floor code must contain uppercase letters, numbers, or hyphens');
     }
 
     const existing = await FloorModel.findOne({
       tenantId,
       projectId,
-      towerId: data.towerId || { $exists: false },
-      buildingId: data.buildingId || { $exists: false },
-      floorNo
+      parentType,
+      buildingId: resolvedBuildingId,
+      towerId: resolvedTowerId,
+      code: cleanCode
     });
+
     if (existing) {
-      throw new ApiError(409, 'RESOURCE_CONFLICT', `Floor number '${floorNo}' already exists in parent structure`);
+      throw new ApiError(409, 'RESOURCE_CONFLICT', `Floor code '${cleanCode}' already exists under this parent structure`);
     }
+
+    const floorNo = typeof data.floorNo === 'number' ? data.floorNo : parseInt(data.floorNo || '0', 10);
 
     const floorId = `FLR-${Date.now()}`;
     const floor = await FloorModel.create({
       ...data,
       floorId,
-      tenantId, // Server context
-      projectId, // Server context
+      tenantId,
+      projectId,
+      parentType,
+      buildingId: resolvedBuildingId,
+      towerId: resolvedTowerId,
       floorNo,
-      code: data.code ? data.code.trim().toUpperCase() : `F-${floorNo}`,
+      code: cleanCode,
       status: 'active',
       createdBy: actorUserId
     });
@@ -878,9 +904,10 @@ export class MasterDataService {
     delete data.floorId;
     delete data.tenantId;
     delete data.projectId;
+    delete data.parentType;
     delete data.towerId;
     delete data.buildingId;
-    delete data.floorNo;
+    delete data.code;
 
     Object.assign(floor, data);
     floor.updatedBy = actorUserId;

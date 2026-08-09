@@ -10,11 +10,13 @@ export const MasterCategoryListView = memo(function MasterCategoryListView({ cat
 
   const categoryRecords = masterRecords[category.id] || [];
 
+  const isActiveStatus = (st) => ['Active', 'active', 'Available', 'AVAILABLE'].includes(st);
+
   const filteredRecords = useMemo(() => {
     return categoryRecords.filter((rec) => {
       // Status filter
-      if (statusFilter === 'active' && rec.status !== 'Active') return false;
-      if (statusFilter === 'inactive' && rec.status !== 'Inactive') return false;
+      if (statusFilter === 'active' && !isActiveStatus(rec.status)) return false;
+      if (statusFilter === 'inactive' && isActiveStatus(rec.status)) return false;
 
       // Search filter across all keys
       if (!searchTerm.trim()) return true;
@@ -40,7 +42,7 @@ export const MasterCategoryListView = memo(function MasterCategoryListView({ cat
           <div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>{category.name} Master List</h3>
             <p className="mono-data" style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
-              {categoryRecords.length} Total Records | {categoryRecords.filter(r => r.status === 'Active').length} Active
+              {categoryRecords.length} Total Records | {categoryRecords.filter(r => isActiveStatus(r.status)).length} Active
             </p>
           </div>
         </div>
@@ -100,8 +102,8 @@ export const MasterCategoryListView = memo(function MasterCategoryListView({ cat
             aria-label="Filter status"
           >
             <option value="all">All Records ({categoryRecords.length})</option>
-            <option value="active">Active Only ({categoryRecords.filter(r => r.status === 'Active').length})</option>
-            <option value="inactive">Inactive Only ({categoryRecords.filter(r => r.status === 'Inactive').length})</option>
+            <option value="active">Active Only ({categoryRecords.filter(r => isActiveStatus(r.status)).length})</option>
+            <option value="inactive">Inactive Only ({categoryRecords.filter(r => !isActiveStatus(r.status)).length})</option>
           </select>
         </div>
       </div>
@@ -136,7 +138,7 @@ export const MasterCategoryListView = memo(function MasterCategoryListView({ cat
                     return (
                       <td key={f.key} style={{ padding: '0.75rem' }}>
                         <button
-                          className={`badge ${val === 'Active' ? 'badge-success' : 'badge-warning'}`}
+                          className={`badge ${isActiveStatus(val) ? 'badge-success' : 'badge-warning'}`}
                           style={{ border: 'none', cursor: 'pointer' }}
                           onClick={() => toggleMasterStatus(category.id, rec.id)}
                           title="Click to toggle status"

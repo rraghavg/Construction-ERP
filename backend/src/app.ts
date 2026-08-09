@@ -117,7 +117,7 @@ app.post('/api/v1/seed', async (req, res) => {
       email: 'rahul@abcdevelopers.com',
       passwordHash: hash,
       roleKeys: ['sales_exec'],
-      allowedProjects: ['Project A'], // Denies Project B
+      allowedProjects: ['PRJ-001', 'Project A'], // Denies Project B (PRJ-002)
       status: 'active'
     });
 

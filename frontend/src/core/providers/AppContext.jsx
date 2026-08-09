@@ -5,6 +5,7 @@ import {
   INITIAL_COMPLAINTS_DATA,
   ROLE_PERMISSIONS,
   MODULES_LIST,
+  SETTINGS_MODULE,
   CRM_KPIS,
   INITIAL_LEADS_LIST,
   SALES_KPIS,
@@ -88,10 +89,24 @@ export const AppProvider = ({ children }) => {
   const [recentReceipts, setRecentReceipts] = useState(RECENT_RECEIPTS_LIST);
   const [overdueInstallments, setOverdueInstallments] = useState(OVERDUE_INSTALLMENTS_LIST);
 
-  // Master Data State (13 Categories)
-  const [masterCategories, setMasterCategories] = useState(MASTER_DATA_CATEGORIES);
   const [masterRecords, setMasterRecords] = useState(INITIAL_MASTER_DATA_RECORDS);
   const [activeMasterCategory, setActiveMasterCategory] = useState(null);
+
+  // Dynamic Master Categories with live record counts
+  const masterCategories = useMemo(() => {
+    return MASTER_DATA_CATEGORIES.map((cat) => {
+      const records = masterRecords[cat.id] || [];
+      const total = records.length;
+      const active = records.filter((r) => ['Active', 'active', 'Available', 'AVAILABLE'].includes(r.status)).length;
+      const inactive = total - active;
+      return {
+        ...cat,
+        count: total,
+        activeCount: active,
+        inactiveCount: inactive
+      };
+    });
+  }, [masterRecords]);
 
   // Finance State
   const [financeKpis, setFinanceKpis] = useState(FINANCE_KPIS);
@@ -214,7 +229,7 @@ export const AppProvider = ({ children }) => {
     if (submoduleName) {
       setActiveSubmodule(submoduleName);
     } else {
-      const mod = MODULES_LIST.find((m) => m.id === moduleId);
+      const mod = MODULES_LIST.find((m) => m.id === moduleId) || (moduleId === 'settings' ? SETTINGS_MODULE : null);
       setActiveSubmodule(mod?.submodules?.[0] || 'Overview');
     }
     if (filterState) {
@@ -497,6 +512,20 @@ export const AppProvider = ({ children }) => {
     }
 
     const recId = `M-${categoryId.toUpperCase()}-${Date.now().toString().slice(-4)}`;
+
+    // Auto-generate code if missing
+    let code = newRecord.code;
+    if (!code || !String(code).trim()) {
+      const prefix = {
+        company: 'CMP', projects: 'PRJ', buildings: 'BLD', towers: 'TWR',
+        floors: 'FLR', units: 'UNT', flatTypes: 'FTP', vendors: 'VND',
+        dealers: 'DLR', employees: 'EMP', banks: 'BNK', tax: 'TAX',
+        paymentModes: 'PAY', complaintCategories: 'CAT'
+      }[categoryId] || categoryId.substring(0, 3).toUpperCase();
+      const currentRecords = masterRecords[categoryId] || [];
+      code = `${prefix}-${(currentRecords.length + 1).toString().padStart(3, '0')}`;
+    }
+
     const formattedRecord = {
       id: recId,
       status: 'Active',
@@ -504,7 +533,8 @@ export const AppProvider = ({ children }) => {
       createdOn: new Date().toISOString().split('T')[0],
       updatedBy: 'John Doe (Admin)',
       updatedOn: new Date().toISOString().split('T')[0],
-      ...newRecord
+      ...newRecord,
+      code
     };
 
     setMasterRecords((prev) => ({
@@ -512,9 +542,9 @@ export const AppProvider = ({ children }) => {
       [categoryId]: [formattedRecord, ...(prev[categoryId] || [])]
     }));
 
-    showToast(`Added new master record in ${categoryId.toUpperCase()}: ${newRecord.name || newRecord.code}`, 'success');
+    showToast(`Added new master record in ${categoryId.toUpperCase()}: ${newRecord.name || code}`, 'success');
     logAudit('Created Master Record', `Added record ${recId} in category ${categoryId}`);
-  }, [userRole, showToast, logAudit]);
+  }, [userRole, masterRecords, showToast, logAudit]);
 
   const updateMasterRecord = useCallback((categoryId, recordId, updatedFields) => {
     if (userRole === 'Auditor (Read-Only)' || userRole === 'Staff (Sales/Ops)') {
@@ -566,7 +596,8 @@ export const AppProvider = ({ children }) => {
       ...prev,
       [categoryId]: (prev[categoryId] || []).map((r) => {
         if (r.id === recordId) {
-          const nextStatus = r.status === 'Active' ? 'Inactive' : 'Active';
+          const isCurrentlyActive = ['Active', 'active', 'Available', 'AVAILABLE'].includes(r.status);
+          const nextStatus = isCurrentlyActive ? 'Inactive' : 'Active';
           showToast(`Toggled status of ${r.name || r.code} to ${nextStatus}`, 'info');
           return { ...r, status: nextStatus, updatedOn: new Date().toISOString().split('T')[0] };
         }

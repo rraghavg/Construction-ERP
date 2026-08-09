@@ -84,4 +84,4 @@ const VendorSchema: Schema = new Schema(
 
 VendorSchema.index({ tenantId: 1, vendorNumber: 1 }, { unique: true });
 
-export const VendorModel = mongoose.model<IVendor>('Vendor', VendorSchema);
+export const VendorModel = (mongoose.models.Vendor as mongoose.Model<IVendor>) || mongoose.model<IVendor>('Vendor', VendorSchema);

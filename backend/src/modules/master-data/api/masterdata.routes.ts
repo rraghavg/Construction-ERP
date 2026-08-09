@@ -47,12 +47,14 @@ router.get('/towers/:towerId', checkPermission('master.project.view'), MasterDat
 router.patch('/towers/:towerId', checkPermission('master.project.create'), MasterDataController.updateTower);
 router.post('/towers/:towerId/deactivate', checkPermission('master.project.create'), MasterDataController.deactivateTower);
 
+import { asyncHandler } from '../../../utils/asyncHandler.js';
+
 // Floor Routes
-router.get('/projects/:projectId/floors', checkPermission('master.project.view'), checkProjectScope('projectId'), MasterDataController.listFloors);
-router.post('/projects/:projectId/floors', checkPermission('master.project.create'), checkProjectScope('projectId'), MasterDataController.createFloor);
-router.get('/floors/:floorId', checkPermission('master.project.view'), MasterDataController.getFloorById);
-router.patch('/floors/:floorId', checkPermission('master.project.create'), MasterDataController.updateFloor);
-router.post('/floors/:floorId/deactivate', checkPermission('master.project.create'), MasterDataController.deactivateFloor);
+router.get('/projects/:projectId/floors', checkPermission('master.project.view'), checkProjectScope('projectId'), asyncHandler(MasterDataController.listFloors));
+router.post('/projects/:projectId/floors', checkPermission('master.project.create'), checkProjectScope('projectId'), asyncHandler(MasterDataController.createFloor));
+router.get('/floors/:floorId', checkPermission('master.project.view'), asyncHandler(MasterDataController.getFloorById));
+router.patch('/floors/:floorId', checkPermission('master.project.create'), asyncHandler(MasterDataController.updateFloor));
+router.post('/floors/:floorId/deactivate', checkPermission('master.project.create'), asyncHandler(MasterDataController.deactivateFloor));
 
 // Unit Routes
 router.get('/units', checkPermission('master.unit.view'), MasterDataController.listUnits);

@@ -6,6 +6,7 @@ import { DashboardView } from '../modules/dashboard/pages/DashboardView';
 import { Toast } from '../shared/components/Toast';
 import { LoginPage } from '../core/auth/pages/LoginPage';
 import { sessionManager } from '../core/session/sessionManager';
+import { ErrorBoundary } from '../shared/components/ErrorBoundary';
 import '../styles/global.css';
 import '../styles/dashboard.css';
 
@@ -30,12 +31,18 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(sessionManager.isAuthenticated());
 
   if (!isAuthenticated) {
-    return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
+    return (
+      <ErrorBoundary>
+        <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />
+      </ErrorBoundary>
+    );
   }
 
   return (
-    <AppProvider>
-      <MainLayout />
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <MainLayout />
+      </AppProvider>
+    </ErrorBoundary>
   );
 }

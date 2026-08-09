@@ -79,8 +79,11 @@ export interface IFloor extends Document {
   floorId: string;
   tenantId: string;
   projectId: string;
+  parentType: 'PROJECT' | 'BUILDING' | 'TOWER';
   towerId?: string;
   buildingId?: string;
+  levelNumber?: number;
+  displayOrder?: number;
   floorNo: number;
   code?: string;
   name: string;
@@ -98,8 +101,11 @@ const FloorSchema: Schema = new Schema(
     floorId: { type: String, required: true, unique: true, index: true },
     tenantId: { type: String, required: true, index: true },
     projectId: { type: String, required: true, index: true },
+    parentType: { type: String, enum: ['PROJECT', 'BUILDING', 'TOWER'], required: true, index: true },
     towerId: { type: String, index: true },
     buildingId: { type: String, index: true },
+    levelNumber: Number,
+    displayOrder: Number,
     floorNo: { type: Number, required: true },
     code: { type: String, uppercase: true, trim: true },
     name: { type: String, required: true, trim: true },
@@ -116,7 +122,7 @@ const FloorSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-FloorSchema.index({ tenantId: 1, projectId: 1, towerId: 1, buildingId: 1, floorNo: 1 }, { unique: true });
+FloorSchema.index({ tenantId: 1, projectId: 1, parentType: 1, buildingId: 1, towerId: 1, code: 1 }, { unique: true });
 
 export const BuildingModel = mongoose.model<IBuilding>('Building', BuildingSchema);
 export const TowerModel = mongoose.model<ITower>('Tower', TowerSchema);

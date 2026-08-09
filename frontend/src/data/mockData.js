@@ -241,22 +241,6 @@ export const MODULES_LIST = [
     ]
   },
   {
-    id: 'settings',
-    name: 'System Settings & Preferences',
-    icon: 'Settings',
-    badge: '128 Configs',
-    submodules: [
-      'Settings Dashboard',
-      'General & Company',
-      'Financial & Tax',
-      'Project Defaults',
-      'Approval Workflows',
-      'System & Security',
-      'Backup & Restore',
-      'Integrations & Webhooks'
-    ]
-  },
-  {
     id: 'audit-logs',
     name: 'Audit & Compliance Logs',
     icon: 'ShieldAlert',
@@ -273,6 +257,23 @@ export const MODULES_LIST = [
     ]
   }
 ];
+
+export const SETTINGS_MODULE = {
+  id: 'settings',
+  name: 'System Settings & Preferences',
+  icon: 'Settings',
+  badge: '128 Configs',
+  submodules: [
+    'Settings Dashboard',
+    'General & Company',
+    'Financial & Tax',
+    'Project Defaults',
+    'Approval Workflows',
+    'System & Security',
+    'Backup & Restore',
+    'Integrations & Webhooks'
+  ]
+};
 
 export const INITIAL_KPIS = {
   totalProjects: {
@@ -1266,14 +1267,16 @@ export const MASTER_DATA_CATEGORIES = [
     name: 'Floors',
     group: 'hierarchy',
     icon: 'Grid',
-    description: 'Floor levels across towers and basements',
+    description: 'Floor levels across hierarchy',
     count: 72,
     activeCount: 72,
     inactiveCount: 0,
     fields: [
       { key: 'code', label: 'Floor Code', required: true, unique: true },
       { key: 'name', label: 'Floor Level', required: true },
-      { key: 'tower', label: 'Parent Tower', required: true },
+      { key: 'parentType', label: 'Parent Type', type: 'select', options: ['PROJECT', 'BUILDING', 'TOWER'], required: true },
+      { key: 'buildingId', label: 'Building', type: 'select', options: ['BLD-GH-A', 'BLD-GH-B'], required: false },
+      { key: 'towerId', label: 'Tower', type: 'select', options: ['TWR-A1', 'TWR-B1'], required: false },
       { key: 'status', label: 'Status', type: 'select', options: ['Active', 'Inactive'] }
     ]
   },

@@ -67,9 +67,29 @@ const ModulePlaceholderView = lazy(() =>
 export const DashboardView = memo(function DashboardView() {
   const { activeModule, activePermissions } = useApp();
 
+  const WIDGET_KEY_MAP = {
+    kpis: 'kpi',
+    kpi: 'kpi',
+    salesChart: 'salesChart',
+    collectionChart: 'collectionChart',
+    topProjects: 'topProjects',
+    recentBookings: 'bookings',
+    bookings: 'bookings',
+    overduePayments: 'overdue',
+    overdue: 'overdue',
+    pendingTasks: 'tasks',
+    tasks: 'tasks',
+    recentComplaints: 'complaints',
+    complaints: 'complaints'
+  };
+
   const isWidgetVisible = useCallback((widgetKey) => {
-    return activePermissions.visibleWidgets.includes(widgetKey);
-  }, [activePermissions.visibleWidgets]);
+    if (!activePermissions || !Array.isArray(activePermissions.visibleWidgets)) {
+      return true;
+    }
+    const targetKey = WIDGET_KEY_MAP[widgetKey] || widgetKey;
+    return activePermissions.visibleWidgets.includes(targetKey) || activePermissions.visibleWidgets.includes(widgetKey);
+  }, [activePermissions]);
 
   const renderModuleView = () => {
     if (activeModule === 'crm') return <CrmDashboardView />;
@@ -103,28 +123,30 @@ export const DashboardView = memo(function DashboardView() {
   }
 
   return (
-    <div className="blueprint-viewer">
-      {/* Overview Structural KPI Grid */}
-      {isWidgetVisible('kpis') && <KpiSummaryGrid />}
+    <ErrorBoundary>
+      <div className="blueprint-viewer">
+        {/* Overview Structural KPI Grid */}
+        {isWidgetVisible('kpis') && <KpiSummaryGrid />}
 
-      {/* Row 2: Analytics & Real-Time Visualization Grid */}
-      <section className="analytics-grid">
-        {isWidgetVisible('salesChart') && <SalesOverviewChart />}
-        {isWidgetVisible('collectionChart') && <CollectionOverviewChart />}
-        {isWidgetVisible('topProjects') && <TopProjectsWidget />}
-      </section>
+        {/* Row 2: Analytics & Real-Time Visualization Grid */}
+        <section className="analytics-grid">
+          {isWidgetVisible('salesChart') && <SalesOverviewChart />}
+          {isWidgetVisible('collectionChart') && <CollectionOverviewChart />}
+          {isWidgetVisible('topProjects') && <TopProjectsWidget />}
+        </section>
 
-      {/* Row 3: Actionable Data & Operations Grid */}
-      <section className="analytics-grid-2">
-        {isWidgetVisible('recentBookings') && <RecentBookingsPanel />}
-        {isWidgetVisible('overduePayments') && <OverduePaymentsPanel />}
-      </section>
+        {/* Row 3: Actionable Data & Operations Grid */}
+        <section className="analytics-grid-2">
+          {isWidgetVisible('recentBookings') && <RecentBookingsPanel />}
+          {isWidgetVisible('overduePayments') && <OverduePaymentsPanel />}
+        </section>
 
-      {/* Row 4: Tasks & Maintenance Operational Feeds */}
-      <section className="analytics-grid-2">
-        {isWidgetVisible('pendingTasks') && <PendingTasksPanel />}
-        {isWidgetVisible('recentComplaints') && <RecentComplaintsPanel />}
-      </section>
-    </div>
+        {/* Row 4: Tasks & Maintenance Operational Feeds */}
+        <section className="analytics-grid-2">
+          {isWidgetVisible('pendingTasks') && <PendingTasksPanel />}
+          {isWidgetVisible('recentComplaints') && <RecentComplaintsPanel />}
+        </section>
+      </div>
+    </ErrorBoundary>
   );
 });

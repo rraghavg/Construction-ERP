@@ -1,6 +1,6 @@
 import { useState, useMemo, memo, useCallback } from 'react';
 import { useApp } from '../../core/providers/AppContext';
-import { MODULES_LIST, ROLE_PERMISSIONS } from '../../data/mockData';
+import { MODULES_LIST, SETTINGS_MODULE, ROLE_PERMISSIONS } from '../../data/mockData';
 import {
   RefreshCw,
   Sun,
@@ -15,31 +15,29 @@ import { NotificationDrawer } from '../../modules/notifications/components/Notif
 export const Header = memo(function Header() {
   const {
     activeModule,
-    activeFilter,
-    setActiveFilter,
-    timeRange,
-    setTimeRange,
+    activeSubmodule,
     userRole,
-    changeRole,
-    isRefreshing,
-    triggerRefresh,
-    refreshCountdown,
-    mobileMenuOpen,
+    setUserRole,
     setMobileMenuOpen,
     theme,
     toggleTheme,
     navigateTo,
     showToast,
-    unreadCount
+    unreadCount,
+    isRefreshing,
+    triggerRefresh
   } = useApp();
 
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const activeModuleData = useMemo(() => {
-    return MODULES_LIST.find((m) => m.id === activeModule) || {
-      name: 'Dashboard Overview'
-    };
+    return (
+      MODULES_LIST.find((m) => m.id === activeModule) ||
+      (activeModule === 'settings' ? SETTINGS_MODULE : null) || {
+        name: 'Dashboard Overview'
+      }
+    );
   }, [activeModule]);
 
   const toggleMobileMenu = useCallback(() => {
