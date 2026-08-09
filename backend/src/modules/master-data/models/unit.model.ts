@@ -66,6 +66,8 @@ export interface IUnit extends Document {
   basePrice: number;
   status: 'active' | 'inactive';
   commercialStatus: 'AVAILABLE' | 'RESERVED' | 'BOOKED' | 'SOLD' | 'LEASED' | 'NOT_FOR_SALE';
+  ownershipStatus: 'COMPANY_OWNED' | 'SOLD';
+  programEnrollment: 'NONE' | 'RENTAL_PROGRAM' | 'MAINTENANCE_ONLY';
   createdBy?: string;
   updatedBy?: string;
   createdAt: Date;
@@ -107,6 +109,18 @@ const UnitSchema: Schema = new Schema(
       type: String,
       enum: ['AVAILABLE', 'RESERVED', 'BOOKED', 'SOLD', 'LEASED', 'NOT_FOR_SALE'],
       default: 'AVAILABLE',
+      index: true
+    },
+    ownershipStatus: {
+      type: String,
+      enum: ['COMPANY_OWNED', 'SOLD'],
+      default: 'COMPANY_OWNED',
+      index: true
+    },
+    programEnrollment: {
+      type: String,
+      enum: ['NONE', 'RENTAL_PROGRAM', 'MAINTENANCE_ONLY'],
+      default: 'NONE',
       index: true
     },
     createdBy: String,

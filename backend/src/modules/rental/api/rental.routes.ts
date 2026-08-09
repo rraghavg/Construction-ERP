@@ -21,4 +21,12 @@ router.post('/collections', RentalController.recordRentCollection);
 // Analytics
 router.get('/analytics', RentalController.getAnalytics);
 
+// Program Enrollments
+router.post('/enrollments', RentalController.enrollUnit);
+router.get('/enrollments', RentalController.getActiveEnrollments);
+router.post('/enrollments/:enrollmentId/cancel', RentalController.cancelEnrollment);
+
+// Buyback
+router.post('/buyback/:unitId', RentalController.processBuyback);
+
 export default router;
