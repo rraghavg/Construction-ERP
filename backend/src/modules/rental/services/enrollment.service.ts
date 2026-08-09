@@ -1,6 +1,7 @@
 import { ProgramEnrollmentModel } from '../models/programEnrollment.model';
 import { UnitModel } from '../../master-data/models/unit.model';
-import { generateId } from '../../../utils/generateId';
+
+const generateId = (prefix: string) => `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
 export class EnrollmentService {
   /**
