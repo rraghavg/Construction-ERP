@@ -198,6 +198,17 @@ export const AppProvider = ({ children }) => {
     setAuditLogs((prev) => [newLog, ...prev.slice(0, 19)]);
   }, [userRole]);
 
+  // Sync browser tab title with active module/submodule
+  useEffect(() => {
+    const mod = MODULES_LIST.find((m) => m.id === activeModule)
+      || (activeModule === 'settings' ? SETTINGS_MODULE : null);
+    const moduleName = mod?.title || (activeModule === 'dashboard' ? 'Dashboard' : activeModule);
+    const subName = activeSubmodule && activeSubmodule !== 'Main Overview' && activeSubmodule !== 'Overview'
+      ? ` — ${activeSubmodule}`
+      : '';
+    document.title = `${moduleName}${subName} | APEX ERP`;
+  }, [activeModule, activeSubmodule]);
+
   const triggerRefresh = useCallback((silent = false) => {
     setIsRefreshing(true);
     if (!silent) {
@@ -224,21 +235,93 @@ export const AppProvider = ({ children }) => {
     return () => clearInterval(timer);
   }, [triggerRefresh]);
 
+  const slugify = useCallback((str) => {
+    return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }, []);
+
+  const unslugify = useCallback((slug) => {
+    return (slug || '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }, []);
+
+  // Sync URL → State on initial mount
+  useEffect(() => {
+    const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
+    if (path) {
+      const parts = path.split('/');
+      const moduleSlug = parts[0];
+      const submoduleSlug = parts.slice(1).join('/');
+
+      // Find matching module by slug
+      const matchedModule = MODULES_LIST.find((m) => slugify(m.id) === moduleSlug)
+        || (moduleSlug === 'settings' ? SETTINGS_MODULE : null);
+
+      if (matchedModule) {
+        setActiveModule(matchedModule.id);
+        if (submoduleSlug && matchedModule.submodules) {
+          const matchedSub = matchedModule.submodules.find(
+            (s) => slugify(s) === submoduleSlug
+          );
+          setActiveSubmodule(matchedSub || unslugify(submoduleSlug));
+        } else {
+          setActiveSubmodule(matchedModule.submodules?.[0] || 'Overview');
+        }
+      } else {
+        // Try direct match (e.g., 'dashboard')
+        setActiveModule(moduleSlug);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Listen for browser back/forward
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (event.state) {
+        setActiveModule(event.state.module || 'dashboard');
+        setActiveSubmodule(event.state.submodule || 'Main Overview');
+      } else {
+        setActiveModule('dashboard');
+        setActiveSubmodule('Main Overview');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const navigateTo = useCallback((moduleId, submoduleName = null, filterState = null) => {
     setActiveModule(moduleId);
+
+    let resolvedSubmodule;
     if (submoduleName) {
-      setActiveSubmodule(submoduleName);
+      resolvedSubmodule = submoduleName;
     } else {
       const mod = MODULES_LIST.find((m) => m.id === moduleId) || (moduleId === 'settings' ? SETTINGS_MODULE : null);
-      setActiveSubmodule(mod?.submodules?.[0] || 'Overview');
+      resolvedSubmodule = mod?.submodules?.[0] || 'Overview';
     }
+    setActiveSubmodule(resolvedSubmodule);
+
+    // Build URL path
+    const moduleSlug = slugify(moduleId);
+    const subSlug = slugify(resolvedSubmodule);
+    const urlPath = moduleId === 'dashboard'
+      ? '/'
+      : `/${moduleSlug}${subSlug ? '/' + subSlug : ''}`;
+
+    // Push to browser history
+    window.history.pushState(
+      { module: moduleId, submodule: resolvedSubmodule },
+      '',
+      urlPath
+    );
+
     if (filterState) {
       setActiveFilter((prev) => ({ ...prev, ...filterState }));
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setMobileMenuOpen(false);
     logAudit('Navigated Module', `Opened module: ${moduleId}`);
-  }, [logAudit]);
+  }, [logAudit, slugify]);
 
   const toggleTaskComplete = useCallback((taskId) => {
     const currentPermissions = ROLE_PERMISSIONS[userRole];
