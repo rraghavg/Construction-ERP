@@ -6,8 +6,9 @@ export const RentalOwnersDirectoryView = memo(function RentalOwnersDirectoryView
   const { showToast } = useApp();
 
   const owners = [
-    { id: 'OWN-101', name: 'Dr. Ramesh Iyer', units: '3 Units (A-102, B-404, T1-901)', phone: '+91 98200 11223', email: 'r.iyer@gmail.com', bank: 'HDFC Bank ****4091', totalRent: '₹ 1,15,000/mo' },
-    { id: 'OWN-102', name: 'Sunita Menon', units: '1 Unit (C-201)', phone: '+91 98211 44556', email: 'sunita.m@yahoo.com', bank: 'ICICI Bank ****8821', totalRent: '₹ 38,000/mo' }
+    { id: 'OWN-101', name: 'Dr. Ramesh Iyer', units: '3 Units (A-102, B-404, T1-901)', phone: '+91 98200 11223', email: 'r.iyer@gmail.com', bank: 'HDFC Bank ****4091', totalRent: '₹ 1,15,000/mo', enrollment: 'RENTAL_PROGRAM' },
+    { id: 'OWN-102', name: 'Sunita Menon', units: '1 Unit (C-201)', phone: '+91 98211 44556', email: 'sunita.m@yahoo.com', bank: 'ICICI Bank ****8821', totalRent: '-', enrollment: 'MAINTENANCE_ONLY' },
+    { id: 'OWN-103', name: 'Apex Developers (Company)', units: '84 Units', phone: '-', email: 'admin@apex.com', bank: '-', totalRent: '-', enrollment: 'COMPANY_OWNED' }
   ];
 
   return (
@@ -19,7 +20,7 @@ export const RentalOwnersDirectoryView = memo(function RentalOwnersDirectoryView
             Property Owners & Landlords Directory
           </h3>
           <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-            Landlord contact database, unit portfolio mapping, and bank payout details
+            Landlord contact database, unit portfolio mapping, and program enrollment status
           </p>
         </div>
 
@@ -28,8 +29,8 @@ export const RentalOwnersDirectoryView = memo(function RentalOwnersDirectoryView
         </button>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
-        <table className="table" style={{ width: '100%', fontSize: '0.75rem' }}>
+      <div className="table-responsive">
+        <table className="table">
           <thead>
             <tr>
               <th>OWNER ID</th>
@@ -37,6 +38,7 @@ export const RentalOwnersDirectoryView = memo(function RentalOwnersDirectoryView
               <th>RENTAL PORTFOLIO UNITS</th>
               <th>CONTACT DETAILS</th>
               <th>PAYOUT BANK ACCOUNT</th>
+              <th>PROGRAM ENROLLMENT</th>
               <th>TOTAL MONTHLY RENT</th>
               <th>ACTION</th>
             </tr>
@@ -49,6 +51,11 @@ export const RentalOwnersDirectoryView = memo(function RentalOwnersDirectoryView
                 <td className="mono-data">{o.units}</td>
                 <td>{o.phone} • {o.email}</td>
                 <td className="mono-data">{o.bank}</td>
+                <td>
+                  {o.enrollment === 'RENTAL_PROGRAM' && <span className="badge badge-success">Assured Rental</span>}
+                  {o.enrollment === 'MAINTENANCE_ONLY' && <span className="badge badge-warning">Maintenance Only</span>}
+                  {o.enrollment === 'COMPANY_OWNED' && <span className="badge badge-info">Company Owned</span>}
+                </td>
                 <td className="mono-data" style={{ color: 'var(--emerald)', fontWeight: 700 }}>{o.totalRent}</td>
                 <td>
                   <button className="btn btn-secondary btn-xs" onClick={() => showToast(`Downloaded statement for ${o.name}`, 'success')}>

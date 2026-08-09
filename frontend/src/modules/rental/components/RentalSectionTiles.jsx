@@ -11,7 +11,8 @@ import {
   Clock,
   Key,
   BarChart3,
-  ArrowUpRight
+  ArrowUpRight,
+  ShieldCheck
 } from 'lucide-react';
 
 const ICON_MAP = {
@@ -23,7 +24,8 @@ const ICON_MAP = {
   IndianRupee,
   Clock,
   Key,
-  BarChart3
+  BarChart3,
+  ShieldCheck
 };
 
 export const RentalSectionTiles = memo(function RentalSectionTiles() {

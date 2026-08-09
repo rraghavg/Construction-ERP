@@ -6,8 +6,8 @@ export const RentalVacanciesCatalogView = memo(function RentalVacanciesCatalogVi
   const { showToast } = useApp();
 
   const vacantUnits = [
-    { unit: 'T1-901', project: 'Green Heights', type: '3 BHK Luxury', rent: '₹ 45,000/mo', deposit: '₹ 1,80,000', status: 'READY_TO_MOVE' },
-    { unit: 'C-201', project: 'Sunshine Towers', type: '2 BHK Premium', rent: '₹ 32,000/mo', deposit: '₹ 1,00,000', status: 'PAINTING_IN_PROGRESS' }
+    { unit: 'T1-901', project: 'Green Heights', type: '3 BHK Luxury', rent: '₹ 45,000/mo', deposit: '₹ 1,80,000', status: 'READY_TO_MOVE', enrollment: 'RENTAL_PROGRAM' },
+    { unit: 'C-201', project: 'Sunshine Towers', type: '2 BHK Premium', rent: '₹ 32,000/mo', deposit: '₹ 1,00,000', status: 'PAINTING_IN_PROGRESS', enrollment: 'COMPANY_OWNED' }
   ];
 
   return (
@@ -19,7 +19,7 @@ export const RentalVacanciesCatalogView = memo(function RentalVacanciesCatalogVi
             Vacant Rental Properties & Available Units Catalog
           </h3>
           <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-            Available rental units ready for tenant onboarding, rent pricing configuration, and listing
+            Available rental units ready for tenant onboarding (filtered by Company Owned & Assured Rental Program)
           </p>
         </div>
       </div>
@@ -32,7 +32,9 @@ export const RentalVacanciesCatalogView = memo(function RentalVacanciesCatalogVi
               <span className="badge badge-success">{v.status}</span>
             </div>
             <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{v.project}</div>
-            <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>{v.type}</div>
+            <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+              {v.type} • {v.enrollment === 'COMPANY_OWNED' ? 'Company Inventory' : 'Assured Rental Opt-in'}
+            </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '1rem' }}>
               <span>Rent: <strong className="mono-data" style={{ color: 'var(--emerald)' }}>{v.rent}</strong></span>

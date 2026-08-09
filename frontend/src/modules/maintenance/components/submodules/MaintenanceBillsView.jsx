@@ -6,8 +6,8 @@ export const MaintenanceBillsView = memo(function MaintenanceBillsView() {
   const { showToast } = useApp();
 
   const bills = [
-    { id: 'MBILL-2026-08', unit: 'A-402', resident: 'Rajesh Kumar', area: '1,450 sq.ft', rate: '₹ 3.50/sq.ft', total: '₹ 5,075', status: 'PAID', date: '01 Aug 2026' },
-    { id: 'MBILL-2026-09', unit: 'B-104', resident: 'Amit Shah', area: '1,800 sq.ft', rate: '₹ 3.50/sq.ft', total: '₹ 6,300', status: 'UNPAID', date: '01 Aug 2026' }
+    { id: 'MBILL-2026-08', unit: 'A-402', resident: 'Rajesh Kumar', area: '1,450 sq.ft', rate: '₹ 3.50/sq.ft', total: '₹ 5,075', status: 'PAID', date: '01 Aug 2026', route: 'Direct Owner Bill' },
+    { id: 'MBILL-2026-09', unit: 'B-104', resident: 'Amit Shah', area: '1,800 sq.ft', rate: '₹ 3.50/sq.ft', total: '₹ 6,300', status: 'DEDUCTED_INTERNALLY', date: '01 Aug 2026', route: 'Auto-Deduct (Rental Program)' }
   ];
 
   return (
@@ -19,7 +19,7 @@ export const MaintenanceBillsView = memo(function MaintenanceBillsView() {
             Monthly Society Maintenance Dues & Billing
           </h3>
           <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-            Per-square-foot society maintenance bill generation, CAM charges, and online payment dues
+            Per-square-foot society maintenance bill generation, and smart routing based on Assured Rental enrollment
           </p>
         </div>
 
@@ -28,15 +28,14 @@ export const MaintenanceBillsView = memo(function MaintenanceBillsView() {
         </button>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
-        <table className="table" style={{ width: '100%', fontSize: '0.75rem' }}>
+      <div className="table-responsive">
+        <table className="table">
           <thead>
             <tr>
               <th>BILL NO.</th>
               <th>UNIT</th>
-              <th>RESIDENT</th>
+              <th>BILLING ROUTE</th>
               <th>CARPET AREA</th>
-              <th>CAM RATE</th>
               <th>TOTAL DUES</th>
               <th>BILL DATE</th>
               <th>STATUS</th>
@@ -48,12 +47,21 @@ export const MaintenanceBillsView = memo(function MaintenanceBillsView() {
               <tr key={b.id}>
                 <td className="mono-data" style={{ fontWeight: 700, color: 'var(--precision-blue)' }}>{b.id}</td>
                 <td className="mono-data">{b.unit}</td>
-                <td style={{ fontWeight: 700 }}>{b.resident}</td>
+                <td style={{ fontWeight: 700, fontSize: '0.7rem' }}>
+                  {b.route === 'Direct Owner Bill' ? (
+                     <span className="badge badge-warning">{b.route}</span>
+                  ) : (
+                     <span className="badge badge-info">{b.route}</span>
+                  )}
+                </td>
                 <td className="mono-data">{b.area}</td>
-                <td className="mono-data">{b.rate}</td>
                 <td className="mono-data" style={{ fontWeight: 700 }}>{b.total}</td>
                 <td className="mono-data">{b.date}</td>
-                <td><span className={`badge ${b.status === 'PAID' ? 'badge-success' : 'badge-danger'}`}>{b.status}</span></td>
+                <td>
+                  <span className={`badge ${b.status === 'PAID' ? 'badge-success' : b.status === 'DEDUCTED_INTERNALLY' ? 'badge-info' : 'badge-danger'}`}>
+                    {b.status === 'DEDUCTED_INTERNALLY' ? 'SETTLED' : b.status}
+                  </span>
+                </td>
                 <td>
                   <button className="btn btn-secondary btn-xs" onClick={() => showToast(`Downloaded bill PDF ${b.id}`, 'success')}>
                     <Download size={11} /> Bill PDF

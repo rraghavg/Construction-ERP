@@ -92,9 +92,18 @@ export const SalesBookingsListView = memo(function SalesBookingsListView({ onOpe
                 <td className="mono-data" style={{ color: 'var(--amber)' }}>₹{b.balanceDue}</td>
                 <td><span className="badge badge-success">{b.status}</span></td>
                 <td>
-                  <button className="btn btn-secondary btn-xs">
-                    <FileText size={11} /> View Details
-                  </button>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button className="btn btn-secondary btn-xs">
+                      <FileText size={11} /> View
+                    </button>
+                    <button 
+                      className="btn btn-secondary btn-xs" 
+                      style={{ color: 'var(--m3-error)', borderColor: 'var(--m3-error-container)' }}
+                      onClick={(e) => { e.stopPropagation(); alert(`Initiating Buyback for Booking ${b.id}`); }}
+                    >
+                      Buyback
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -2034,6 +2034,14 @@ export const RENTAL_SECTION_TILES = [
     targetSubmodule: 'Owners Directory'
   },
   {
+    id: 'Program Enrollments',
+    title: 'Program Enrollments',
+    description: 'Manage Assured Rental & Direct Maintenance opt-ins',
+    icon: 'ShieldCheck',
+    count: '112 Enrolled',
+    targetSubmodule: 'Program Enrollments'
+  },
+  {
     id: 'Tenant Allocation',
     title: 'Tenant Allocation',
     description: 'Allocate tenants to vacant units & process onboarding',

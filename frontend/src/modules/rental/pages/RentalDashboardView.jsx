@@ -14,6 +14,7 @@ import { RecordRentCollectionModal } from '../components/RecordRentCollectionMod
 import { RentalAgreementDetailsModal } from '../components/RentalAgreementDetailsModal';
 
 import { RentalOwnersDirectoryView } from '../components/submodules/RentalOwnersDirectoryView';
+import { RentalProgramEnrollmentsView } from '../components/submodules/RentalProgramEnrollmentsView';
 import { RentalTenantAllocationView } from '../components/submodules/RentalTenantAllocationView';
 import { RentalAgreementsView } from '../components/submodules/RentalAgreementsView';
 import { RentalRentCollectionLedgerView } from '../components/submodules/RentalRentCollectionLedgerView';
@@ -74,6 +75,9 @@ export const RentalDashboardView = memo(function RentalDashboardView() {
       {/* Dynamic Submodule View Routing */}
       {(activeSubmodule === 'Owners Directory' || activeSubmodule === 'Owners') && (
         <RentalOwnersDirectoryView />
+      )}
+      {(activeSubmodule === 'Program Enrollments' || activeSubmodule === 'Enrollments') && (
+        <RentalProgramEnrollmentsView />
       )}
       {(activeSubmodule === 'Tenant Allocation' || activeSubmodule === 'Tenants') && (
         <RentalTenantAllocationView />
