@@ -27,4 +27,11 @@ router.put('/config', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
+import { SettingsController } from './settings.controller.js';
+
+router.get('/', SettingsController.getAll);
+router.put('/bulk', SettingsController.bulkUpdate);
+router.get('/:category', SettingsController.getByCategory);
+router.put('/:key', SettingsController.update);
+
 export default router;

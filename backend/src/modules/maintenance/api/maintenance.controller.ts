@@ -1,6 +1,8 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../../../middleware/auth.middleware.js';
 import { MaintenanceService } from '../services/maintenance.service.js';
+import { MaintenanceBillService } from '../services/maintenanceBill.service.js';
+import { SlaService } from '../services/sla.service.js';
 import { sendSuccess, sendError } from '../../../utils/apiResponse.js';
 
 export class MaintenanceController {
@@ -92,6 +94,66 @@ export class MaintenanceController {
       return sendSuccess(res, analytics);
     } catch (err: any) {
       return sendError(res, err.errorCode || 'ANALYTICS_FAILED', err.message, err.statusCode || 500);
+    }
+  }
+
+  // Maintenance Bills
+  static async generateBills(req: AuthenticatedRequest, res: Response) {
+    try {
+      const { projectId, period } = req.body;
+      const bills = await MaintenanceBillService.generateMonthlyBills(req.tenantId!, projectId, period, req.user?.id || 'System');
+      return sendSuccess(res, bills, { message: 'Maintenance bills generated' }, 201);
+    } catch (err: any) {
+      return sendError(res, err.errorCode || 'BILL_GENERATE_FAILED', err.message, err.statusCode || 500);
+    }
+  }
+
+  static async listBills(req: AuthenticatedRequest, res: Response) {
+    try {
+      const bills = await MaintenanceBillService.listBills(req.tenantId!, req.query);
+      return sendSuccess(res, bills);
+    } catch (err: any) {
+      return sendError(res, err.errorCode || 'BILL_FETCH_FAILED', err.message, err.statusCode || 500);
+    }
+  }
+
+  static async markBillPaid(req: AuthenticatedRequest, res: Response) {
+    try {
+      const { billId } = req.params;
+      const { paymentMode } = req.body;
+      const bill = await MaintenanceBillService.markAsPaid(req.tenantId!, billId, paymentMode, req.user?.id || 'System');
+      return sendSuccess(res, bill, { message: 'Bill marked as paid' });
+    } catch (err: any) {
+      return sendError(res, err.errorCode || 'BILL_PAY_FAILED', err.message, err.statusCode || 500);
+    }
+  }
+
+  static async getOverdueBills(req: AuthenticatedRequest, res: Response) {
+    try {
+      const bills = await MaintenanceBillService.getOverdue(req.tenantId!);
+      return sendSuccess(res, bills);
+    } catch (err: any) {
+      return sendError(res, err.errorCode || 'BILL_FETCH_FAILED', err.message, err.statusCode || 500);
+    }
+  }
+
+  // SLA
+  static async getSlaMetrics(req: AuthenticatedRequest, res: Response) {
+    try {
+      const { period } = req.query;
+      const metrics = await SlaService.calculateSlaMetrics(req.tenantId!, period as string);
+      return sendSuccess(res, metrics);
+    } catch (err: any) {
+      return sendError(res, err.errorCode || 'SLA_METRICS_FAILED', err.message, err.statusCode || 500);
+    }
+  }
+
+  static async getVendorPerformance(req: AuthenticatedRequest, res: Response) {
+    try {
+      const performance = await SlaService.getVendorPerformance(req.tenantId!);
+      return sendSuccess(res, performance);
+    } catch (err: any) {
+      return sendError(res, err.errorCode || 'VENDOR_PERF_FAILED', err.message, err.statusCode || 500);
     }
   }
 }

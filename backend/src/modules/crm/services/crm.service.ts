@@ -219,4 +219,13 @@ export class CrmService {
       scheduledVisits
     };
   }
+  // 9. Convert Lead
+  static async convertLead(tenantId: string, leadId: string): Promise<ILead | null> {
+    const lead = await LeadModel.findOneAndUpdate(
+      { tenantId, _id: leadId },
+      { status: 'CONVERTED' },
+      { new: true }
+    );
+    return lead;
+  }
 }

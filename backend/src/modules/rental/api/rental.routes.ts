@@ -29,4 +29,17 @@ router.post('/enrollments/:enrollmentId/cancel', RentalController.cancelEnrollme
 // Buyback
 router.post('/buyback/:unitId', RentalController.processBuyback);
 
+// Settlements
+router.post('/settlements', RentalController.generateSettlement);
+router.get('/settlements', RentalController.listSettlements);
+router.patch('/settlements/:settlementId/approve', RentalController.approveSettlement);
+router.patch('/settlements/:settlementId/pay', RentalController.markSettlementPaid);
+
+// Renewals
+router.get('/renewals/upcoming', RentalController.getUpcomingRenewals);
+router.post('/renewals/:leaseId', RentalController.renewLease);
+
+// Vacancies
+router.get('/vacancies', RentalController.getVacantUnits);
+
 export default router;

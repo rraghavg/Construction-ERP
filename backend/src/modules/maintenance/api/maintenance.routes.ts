@@ -26,4 +26,14 @@ router.get('/work-orders', MaintenanceController.listWorkOrders);
 // Analytics
 router.get('/analytics', MaintenanceController.getAnalytics);
 
+// Bills
+router.post('/bills/generate', MaintenanceController.generateBills);
+router.get('/bills', MaintenanceController.listBills);
+router.patch('/bills/:billId/pay', MaintenanceController.markBillPaid);
+router.get('/bills/overdue', MaintenanceController.getOverdueBills);
+
+// SLA
+router.get('/sla/metrics', MaintenanceController.getSlaMetrics);
+router.get('/sla/vendor-performance', MaintenanceController.getVendorPerformance);
+
 export default router;
